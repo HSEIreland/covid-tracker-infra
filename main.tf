@@ -18,7 +18,7 @@ provider "aws" {
 provider "aws" {
   version = "2.56.0"
   alias   = "us"
-  region  = "us-east-1"
+  region  = "eu-west-1"
   profile = var.profile
 }
 
@@ -32,7 +32,7 @@ provider "aws" {
 provider "aws" {
   version = "2.56.0"
   alias   = "root-us"
-  region  = "us-east-1"
+  region  = "eu-west-1"
   profile = var.root_profile
 }
 
