@@ -1,0 +1,4 @@
+.terraform
+*.tfplan
+*.pem
+*.zip

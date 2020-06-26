@@ -1,0 +1,518 @@
+{
+  "widgets": [
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 1,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/ApiGateway", "Count", "ApiName", "${gateway_name}", { "stat": "Sum", "id": "m0r0" } ]
+              ],
+              "title": "API Request Count",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 8,
+          "y": 1,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/ApiGateway", "5XXError", "ApiName", "${gateway_name}", { "stat": "Sum", "id": "m0r0" } ]
+              ],
+              "title": "5XX Error Count",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 16,
+          "y": 1,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/ApiGateway", "4XXError", "ApiName", "${gateway_name}", { "stat": "Sum", "id": "m0r0" } ]
+              ],
+              "title": "4XX Error Count",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 6,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/ApiGateway", "Latency", "ApiName", "${gateway_name}", { "stat": "Average", "id": "m0r0" } ]
+              ],
+              "title": "Total Latency",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 12,
+          "y": 6,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/ApiGateway", "IntegrationLatency", "ApiName", "${gateway_name}", { "stat": "Average", "id": "m0r0" } ]
+              ],
+              "title": "Integration Latency",
+              "copilot": true
+          }
+      },
+      {
+        "type": "log",
+        "x": 0,
+        "y": 11,
+        "width": 12,
+        "height": 6,
+        "properties": {
+            "query": "SOURCE '${api_log_group}' | fields req.url\n| filter req.url not like /healthcheck/\n| filter req.url like /[a-z]/\n| stats count(*) as calls by req.url\n| sort calls desc",
+            "region": "${region}",
+            "stacked": false,
+            "title": "API Calls per Endpoint",
+            "view": "table"
+        }
+      },
+      {
+        "type": "metric",
+        "x": 12,
+        "y": 11,
+        "width": 12,
+        "height": 6,
+        "properties": {
+            "view": "timeSeries",
+            "stacked": false,
+            "region": "${region}",
+            "metrics": [
+                [ "WAF", "CountedRequests", "WebACL", "ftWaf${environment}", "Region", "${region}", "Rule", "ftSQLI${environment}", { "accountId": "${account_id}" } ],
+                [ "...", "ftXSS${environment}", { "accountId": "${account_id}" } ],
+                [ ".", "AllowedRequests", ".", ".", ".", ".", ".", "ALL", { "accountId": "${account_id}" } ]
+            ],
+            "title": "WAF Requests"
+        }
+      },
+      {
+          "type": "text",
+          "x": 0,
+          "y": 0,
+          "width": 24,
+          "height": 1,
+          "properties": {
+              "markdown": "\n# API Gateway\n"
+          }
+      },
+      {
+          "type": "text",
+          "x": 0,
+          "y": 11,
+          "width": 24,
+          "height": 1,
+          "properties": {
+              "markdown": "\n# Load Balancer\n"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 24,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ECS", "CPUUtilization", "ServiceName", "${ecs_push_service_name}", "ClusterName", "${ecs_cluster_name}", { "stat": "Average" } ],
+                  [ "...", "${ecs_api_service_name}", ".", ".", { "stat": "Average" } ]
+              ],
+              "region": "${region}",
+              "title": "CPU Utilization Average",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false
+          }
+      },
+      {
+          "type": "metric",
+          "x": 12,
+          "y": 24,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ECS", "MemoryUtilization", "ServiceName", "${ecs_api_service_name}", "ClusterName", "${ecs_cluster_name}", { "stat": "Average" } ],
+                  [ "...", "${ecs_push_service_name}", ".", ".", { "stat": "Average" } ]
+              ],
+              "region": "${region}",
+              "title": "Memory Utilization Average",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false
+          }
+      },
+      {
+          "type": "text",
+          "x": 0,
+          "y": 23,
+          "width": 24,
+          "height": 1,
+          "properties": {
+              "markdown": "\n# Elastic Container Service\n"
+          }
+      },
+      {
+          "type": "text",
+          "x": 0,
+          "y": 29,
+          "width": 24,
+          "height": 1,
+          "properties": {
+              "markdown": "\n# RDS\n"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 30,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "CPU Utilization Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 12,
+          "y": 30,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Sum", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Sum", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Sum", "id": "m0r2" } ]
+              ],
+              "title": "Database Connections Sum",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 35,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "ReadLatency", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "Read Latency Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 8,
+          "y": 35,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "ReadThroughput", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "Read Throughput Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 16,
+          "y": 35,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "ReadIOPS", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "Read IOPS Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 40,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "WriteLatency", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "Write Latency Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 8,
+          "y": 40,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "WriteThroughput", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "Write Throughput Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 16,
+          "y": 40,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "region": "${region}",
+              "metrics": [
+                  [ "AWS/RDS", "WriteIOPS", "DBInstanceIdentifier", "${rds_db_cluster_name}-1", { "stat": "Average", "id": "m0r0" } ],
+                  [ "...", "${rds_db_cluster_name}-2", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${rds_db_cluster_name}-3", { "stat": "Average", "id": "m0r2" } ]
+              ],
+              "title": "Write IOPS Average",
+              "copilot": true
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 52,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/Lambda", "Invocations", "FunctionName", "${lambda_token_fn_name}", { "id": "m0r1" } ],
+                  [ "...", "${lambda_cso_fn_name}", { "id": "m0r2" } ],
+                  [ "...", "${lambda_stats_fn_name}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "Invocations Sum",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 12,
+          "y": 52,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/Lambda", "Duration", "FunctionName", "${lambda_token_fn_name}", { "stat": "Average", "id": "m0r1" } ],
+                  [ "...", "${lambda_cso_fn_name}", { "stat": "Average", "id": "m0r2" } ],
+                  [ "...", "${lambda_stats_fn_name}", { "stat": "Average", "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "Duration Average",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 57,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/Lambda", "Errors", "FunctionName", "${lambda_token_fn_name}", { "id": "m0r1" } ],
+                  [ "...", "${lambda_cso_fn_name}", { "id": "m0r2" } ],
+                  [ "...", "${lambda_stats_fn_name}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "Errors Sum",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 12,
+          "y": 57,
+          "width": 12,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/Lambda", "Throttles", "FunctionName", "${lambda_token_fn_name}", { "id": "m0r1" } ],
+                  [ "...", "${lambda_cso_fn_name}", { "id": "m0r2" } ],
+                  [ "...", "${lambda_stats_fn_name}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "Throttles Sum",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "text",
+          "x": 0,
+          "y": 51,
+          "width": 24,
+          "height": 1,
+          "properties": {
+              "markdown": "\n# Lambda\n"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 12,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${api_lb_arn_suffix}", { "id": "m0r2" } ],
+                  [ "...", "${push_lb_arn_suffix}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "Request Count Sum",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 12,
+          "y": 17,
+          "width": 12,
+          "height": 6,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ApplicationELB", "HTTPCode_ELB_5XX_Count", "LoadBalancer", "${api_lb_arn_suffix}", { "id": "m0r2" } ],
+                  [ "...", "${push_lb_arn_suffix}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "HTTP 5XX Count",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 16,
+          "y": 12,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ApplicationELB", "ActiveConnectionCount", "LoadBalancer", "${api_lb_arn_suffix}", { "id": "m0r2" } ],
+                  [ "...", "${push_lb_arn_suffix}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "Active Connection Count Sum",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 0,
+          "y": 17,
+          "width": 12,
+          "height": 6,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ApplicationELB", "HTTPCode_ELB_4XX_Count", "LoadBalancer", "${api_lb_arn_suffix}", { "id": "m0r2" } ],
+                  [ "...", "${push_lb_arn_suffix}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "HTTP 4XX Count",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      },
+      {
+          "type": "metric",
+          "x": 8,
+          "y": 12,
+          "width": 8,
+          "height": 5,
+          "properties": {
+              "metrics": [
+                  [ "AWS/ApplicationELB", "NewConnectionCount", "LoadBalancer", "${api_lb_arn_suffix}", { "id": "m0r2" } ],
+                  [ "...", "${push_lb_arn_suffix}", { "id": "m0r3" } ]
+              ],
+              "region": "${region}",
+              "title": "New Connection Count Sum",
+              "copilot": true,
+              "period": 300,
+              "view": "timeSeries",
+              "stacked": false,
+              "stat": "Sum"
+          }
+      }
+  ]
+}
